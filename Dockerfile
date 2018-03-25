@@ -29,6 +29,8 @@ RUN apk --no-cache add \
     php5-pdo_mysql \
     php5-snmp \
     php5-ldap \
+    nginx \
+    supervisor \
     && chmod +x /entrypoint.sh \
     && curl -sSLo /racktables.tar.gz 'https://github.com/RackTables/racktables/archive/RackTables-0.21.1.tar.gz' \
     && mkdir /opt \
@@ -36,7 +38,7 @@ RUN apk --no-cache add \
     && mv /opt/racktables-RackTables-0.21.1 /opt/racktables \
     && rm -f /racktables.tar.gz \
     && sed -i \
-    -e 's|^listen =.*$|listen = 9000|' \
+#    -e 's|^listen =.*$|listen = 9000|' \
     -e 's|^;daemonize =.*$|daemonize = no|' \
     /etc/php5/php-fpm.conf 
 
@@ -51,11 +53,21 @@ RUN chmod -R g+rwX /var/log/ && \
 
 RUN chgrp -R 0 /opt/racktables
 
+RUN chmod -R g+rwX /var/lib/nginx/ && \
+    chgrp -R 0 /var/lib/nginx
+
+    RUN chmod -R g+rwX /var/tmp/nginx/ && \
+    chgrp -R 0 /var/tmp/nginx
+
 RUN echo "TLS_REQCERT allow" > /etc/openldap/ldap.conf
 
 VOLUME /opt/racktables/wwwroot
 EXPOSE 9000
+
+COPY supervisord.conf /etc/supervisord.conf
+COPY nginx.conf /etc/nginx/nginx.conf
+
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/bin/php-fpm5"]
+CMD ["/usr/bin/supervisord"]
 
 USER 1000
