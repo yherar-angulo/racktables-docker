@@ -62,7 +62,7 @@ RUN chmod -R g+rwX /var/lib/nginx/ && \
 RUN echo "TLS_REQCERT allow" > /etc/openldap/ldap.conf
 
 VOLUME /opt/racktables/wwwroot
-EXPOSE 9000
+EXPOSE 8080
 
 COPY supervisord.conf /etc/supervisord.conf
 COPY nginx.conf /etc/nginx/nginx.conf
