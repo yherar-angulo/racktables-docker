@@ -1,12 +1,17 @@
 # racktables-docker
 
 
-Racktables https://www.racktables.org/ installation with LDAP Authentication
+Racktables https://www.racktables.org/ installation with LDAP Authentication. This works with OpenShift.
+
+* Runs PHP-FPM and NGINX with supervisord as non root
+* Expose Port 8080 from nginx
 
 
 # Run Example
 
 You habe to adapt this for your environment
+
+Sample docker-compose.yml:
 
 ```
 racktables:
@@ -28,5 +33,5 @@ nginx:
   volumes:
   - ./nginx.conf:/etc/nginx/nginx.conf
   ports:
-  - 8000:80
+  - 8080:8080
 ```
